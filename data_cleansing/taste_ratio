@@ -1,0 +1,31 @@
+class taste_ratio:
+    recipe_ID=""
+    salt_value=0
+    sweet_value=0
+    sour_value=0
+    bitter_value=0
+    umami_value=0
+    
+    def __init__(self,recID,slt,swt,sor,bit,uma):
+        self.recipe_ID=recID
+        self.salt_value=slt
+        self.sweet_value=swt
+        self.sour_value=sor
+        self.bitter_value=bit
+        self.umami_value=uma
+        
+        
+x=taste_ratio("freiowhquvrnbgio",3,3,3,3,3)
+print(x.recipe_ID)
+
+
+
+ing=read_ingredient(2000)
+
+ing_df=ing[ing["recipeID"]=="0025761763a0e889198f8862ac891928963af837"]
+salt_amount=ing_df[ing_df["ingredient"]=="塩"]["size"]
+sweet_amount=ing_df[ing_df["ingredient"]=="砂糖"]["size"]
+sour_amount=ing_df[ing_df["ingredient"]=="酢"]["size"]
+bitter_amount=ing_df[ing_df["ingredient"]=="苦味"]["size"]
+umami_amount=ing_df[ing_df["ingredient"]=="味の素"]["size"]
+taste_ratio_"recipeID"=new taste_ratio
