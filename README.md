@@ -38,17 +38,17 @@ DataFrameの中から"0.~~"、"200"のような物のみをとりだし、
 sys.pathとかで絶対パスとか相対パスとかうんたらやるのはめんどくさかったので、作業しているノートブックと同じディレクトリに以下のようにおいてください
 
 (ディレクトリ)
-|-<span style="color: red; ">example.ipynb</span>(作業してるノートブック)
-|-team1_module.py
-|-data(データを保管してるディレクトリ)
-|  |-recipe(recipe1998.csvからrecipe2014.csvが入っている。他も同じ)
-|  |-report
-|  |-step
-|  |-ingredient
+|-<span style="color: red; ">example.ipynb</span>(作業してるノートブック) \n
+|-team1_module.py \n
+|-data(データを保管してるディレクトリ) \n
+|  |-recipe(recipe1998.csvからrecipe2014.csvが入っている。他も同じ) \n
+|  |-report \n
+|  |-step \n
+|  |-ingredient \n
 
 ### jupyternotebookでの使い方
 
-import team1_modul as t1
-df = t1.read_ingredient
-
+import team1_modul as t1 \n
+df = t1.read_ingredient \n
+\n
 こんな感じで使ってください
