@@ -41,14 +41,14 @@ sys.pathとかで絶対パスとか相対パスとかうんたらやるのはめ
 |-<span style="color: red; ">example.ipynb</span>(作業してるノートブック) <br>
 |-team1_module.py <br>
 |-data(データを保管してるディレクトリ) <br>
-|  |-recipe(recipe1998.csvからrecipe2014.csvが入っている。他も同じ) <br>
-|  |-report <br>
-|  |-step <br>
-|  |-ingredient <br>
+|&nbsp&nbsp|-recipe(recipe1998.csvからrecipe2014.csvが入っている。他も同じ) <br>
+|&nbsp&nbsp|-report <br>
+|&nbsp&nbsp|-step <br>
+|&nbsp&nbsp|-ingredient <br>
 
 ### jupyternotebookでの使い方
-
-import team1_modul as t1 <br>
-df = t1.read_ingredient <br>
-<br>
+```python
+import team1_modul as t1 
+df = t1.read_ingredient 
+```
 こんな感じで使ってください
