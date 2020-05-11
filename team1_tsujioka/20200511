@@ -1,1 +1,19 @@
-test
+def extract_otsumami_recipe(df):
+  x=df[df["recipe_name"].str.contains("おつまみ",na=False)]
+  y=df[df["details"].str.contains("おつまみ",na=False)]
+  z=x.append(y)
+  a=set(z["recipeID"])
+  return df[df["recipeID"].isin(a)]
+
+def ratio_appender(df):
+    df["salt"]=0
+    df["sweet"]=0
+    df["sour"]=0
+    df["bitter"]=0
+    df["umami"]=0
+    return df
+
+def taste_fill_in(recdf,ingdf):
+    for row in ingdf.itertuples():
+        if row.ingredient == '塩':
+            recdf.loc[recdf["recipeID"]==row.recipeID,"salt"] += row.size
