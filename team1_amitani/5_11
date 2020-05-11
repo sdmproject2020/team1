@@ -1,1 +1,37 @@
+import team1_module as t1
+import pandas as pd
 
+#これでデフォを打たなくていい
+step=t1.read_step(2005)
+recipe=t1.read_recipe(2005)
+ingr=t1.read_ingredient(2005)
+report=t1.read_report(2005)
+
+
+#手順の数
+step_number=step['recipeID'].value_counts()
+print(step_number)
+print(len(step_number))
+
+#材料の数
+ingr_number=ingr["recipeID"].value_counts()
+print(ingr_number)
+
+#index再生
+h=step_number.reset_index()
+h=h.rename(columns={"index":"recipeID","recipeID":"countstep"})
+i=ingr_number.reset_index()
+i=i.rename(columns={"index":"recipeID","recipeID":"ingr_num"})
+
+＃合わせて表作成
+join_ease=pd.merge(h,i,on="recipeID",how="left")
+join_ease.head()
+
+
+
+#read_recipeで「簡単手軽時短」を含むもの
+recipe_ease1=recipe[recipe["recipe_name"].str.contains("簡単|手軽|時短",na=False)]
+recipe_ease2=recipe[recipe["details"].str.contains("簡単|手軽|時短",na=False)]
+recipe_ease3=recipe[recipe["advice"].str.contains("簡単|手軽|時短",na=False)]
+recipe_ease=pd.concat([recipe_ease1,recipe_ease2,recipe_ease3])
+print(recipe_ease)
