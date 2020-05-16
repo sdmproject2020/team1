@@ -1,0 +1,6 @@
+def extract_something(df,sth):
+  x=df[df["recipe_name"].str.contains(sth,na=False)]
+  y=df[df["details"].str.contains(sth,na=False)]
+  z=x.append(y)
+  a=set(z["recipeID"])
+  return df[df["recipeID"].isin(a)]
