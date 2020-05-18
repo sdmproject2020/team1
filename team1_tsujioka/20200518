@@ -1,0 +1,21 @@
+#2014年に全体で最も使用された材料トップ２０の使用量が、1998年からどのような変化をしているかをまとめた表を作る
+
+df_graph=pd.DataFrame(index=["a"]) #df作成（便宜上行を作る必要がある）
+
+for i in range(17): #年
+    df_graph[str(i+1998)]=0
+    
+for i in range(20): #材料
+    df_graph.loc[i]=0
+    
+df_graph=df_graph.drop("a",axis=0) #最初に作った行の削除
+
+df_graph=df_graph.rename(index={0:"砂糖",1:"塩",2:"水",3:"卵",4:"醤油",5:"玉ねぎ",6:"牛乳",7:"塩コショウ",8:"バター",9:"オリーブオイル",10:"マヨネーズ",11:"酒",12:"ごま油",13:"人参",14:"サラダ油",15:"みりん",16:"片栗粉",17:"小麦粉",18:"薄力粉",19:"ご飯"})
+#index変更
+
+ing_list=list(df_graph.index) #indexリスト化
+
+for j in range(17): #値の代入
+    ing=read_ingredient(j+1998)
+    for i in range(20):
+        df_graph.iat[i,j]=ing[ing["ingredient"]==ing_list[i]]["ingredient"].size
