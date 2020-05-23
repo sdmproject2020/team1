@@ -164,7 +164,7 @@ df_ingredient_c_sum_cut = df_ingredient_c_sum[df_ingredient_c_sum["ingredient"].
 
 vec = mk_vector_otsumami(df_ingredient_c_sum_cut)
 
-
+vec_list_e=["salt","soysource","mayo","sesamioil","sake"]
 
 #酒と醤油の比率とって最頻値
 sake = vec[vec["sake"]>0.1 ]
