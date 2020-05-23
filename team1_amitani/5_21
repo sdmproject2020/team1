@@ -186,8 +186,17 @@ sakesoy_wariai_sorted = sorted(sakesoy_wariai.items(), key=lambda x:x[1],reverse
 
 #調味料の比をとって大きい順に
 vec3_rate ={}
+hozon=[]
 for a in vec_list_e:
     for b in vec_list_e:
+        if a==b:
+            continue
+        if (a,b) in hozon:
+            continue
+        else:
+            hozon.append((b,a))
+            
+        
         vec1 = vec[vec[a]>0.1]
         vec1 = vec1[vec1[a]<200]
         vec2 = vec1[vec1[b]>0.1]
@@ -196,8 +205,23 @@ for a in vec_list_e:
         ans = vec2[a]/vec2[b]
         ans.value_counts()
         
-        vec3_rate [a+b] =ans.value_counts()
-    
+        vec3_rate [a+"_"+b] =ans.value_counts()
+        
+#sort_tに各組み合わせの総数を入れる        
+sum_num={}
+hozon=[]
+for a in vec_list_e:
+    for b in vec_list_e:
+        if a==b:
+            continue
+        if (a,b) in hozon:
+            continue
+        else:
+            hozon.append((b,a))
+            
+        sum_num[a+"_"+b]=vec3_rate[a+"_"+b].values.sum()
+        
+sort_t=sorted(sum_num.items(),key=lambda x:x[1],reverse=True)    
 
 #調味料の比をとって大きい順に(自動化失敗）
 #vec3_rate ={}
