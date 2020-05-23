@@ -221,7 +221,28 @@ for a in vec_list_e:
             
         sum_num[a+"_"+b]=vec3_rate[a+"_"+b].values.sum()
         
-sort_t=sorted(sum_num.items(),key=lambda x:x[1],reverse=True)    
+sort_t=sorted(sum_num.items(),key=lambda x:x[1],reverse=True)
+
+
+#result_dictに各組み合わせで使われる頻度が高い材料が入る
+result_dict={}
+hozon=[]
+for a in vec_list_e:
+    for b in vec_list_e:
+        if a==b:
+            continue
+        if (a,b) in hozon:
+            continue
+        else:
+            hozon.append((b,a))
+        
+        first_rate=vec3_rate[a+"_"+b].index[0]
+        x=vec[abs(vec[a]-first_rate*vec[b])<0.01]
+        x=x[x[a]>0.1]
+                
+        y=otsumami_ingredient[otsumami_ingredient["recipeID"].isin(x["recipeID"])]
+        
+        result_dict[a+"_"+b]=y["ingredient"].value_counts()
 
 #調味料の比をとって大きい順に(自動化失敗）
 #vec3_rate ={}
