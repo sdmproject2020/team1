@@ -1,0 +1,201 @@
+import team1_module as t1 #モジュールのimport
+import pandas as pd
+
+#team1_moduleの改訂版
+def read_recipe(n): 
+    columns = ['recipeID','UserID','recipe_name','details','servings',
+              'advice','upbringing','date']
+    loc = 'data/recipe/recipe' + str(n) + '.csv'
+    df = pd.read_csv(loc,names=columns,index_col=None)
+    return df
+
+
+def read_report(n):
+    columns = ['recipeID','UserID','message','reply','date']
+    loc = 'data/report/report' + str(n) + '.csv'
+    df = pd.read_csv(loc,names=columns)
+    return df
+
+
+def read_step(n):
+    columns = ['recipeID','step_number','note']
+    loc = 'data/step/step' + str(n) + '.csv'
+    df = pd.read_csv(loc,names=columns)
+    return df
+
+
+def read_ingredient(n):
+    columns = ['recipeID','ingredient','size']
+    loc = 'data/ingredient/ingredient' + str(n) + '.csv'
+    df = pd.read_csv(loc,names=columns)
+    return df
+
+
+def z2h(df):
+    hankaku = ["0","1","2","3","4","5","6","7","8","9","/"]
+    zenkaku = ["０","１","２","３","４","５","６","７","８","９","／"] 
+    columns = df.columns.values
+    for i,j in zip(hankaku,zenkaku):
+        for k in columns:
+            df[k] = df[k].str.replace(j,i)
+    return df
+
+
+def size2g(df): #小、大さじのところだけ変更する
+    df['size'] = df['size'].replace('大さじ(\d+).*',r'\1*15',regex=True)
+    df['size'] = df['size'].replace('小さじ(\d+).*',r'\1*5',regex=True)
+    df['size'] = df['size'].replace('小さじ(\d/\d).*',r'5*\1',regex=True)
+    df['size'] = df['size'].replace('(\d+)ｇ',r'\1',regex=True)
+    df['size'] = df['size'].replace('(\d+)g',r'\1',regex=True)
+    df['size'] = df['size'].replace('少々','0.5')
+    df['size'] = df['size'].replace('(\d+)グラム',r'\1',regex=True)
+    df['size'] = df['size'].replace('^0(\d+)',r'\1',regex=True)
+    df["size"] = df["size"].replace('大(\d+).*',r'\1*15',regex=True)
+    df["size"] = df["size"].replace('大匙(\d+).*',r'\1*15',regex=True)
+    df['size'] = df['size'].replace('小(\d+).*',r'\1*5',regex=True)
+    df['size'] = df['size'].replace('小匙(\d+).*',r'\1*5',regex=True)
+                                    
+    return df
+    
+
+def g2float(df):
+    x = df[df['size'].str.match(r'^\d+\.*\**\d*$')].copy()
+    x['size'] = x['size'].apply(eval)
+    return x
+
+
+def clean_ingredient(df):
+    df = df.fillna('適量')
+    df = rmkigou(df)
+    df = z2h(df) #半角に直す
+    df = size2g(df) #g表現に直す
+    df = g2float(df) #数字計算
+
+    return df
+
+def report_popularity(df):
+    df = df["recipeID"].value_counts()
+    df = df.reset_index()
+    df = df.rename(columns={"index":"recipeID","recipeID":"count"})
+    return df
+
+
+def rmkigou(df):
+    kigoulist = ["●","☆","◎","※","▲","◯","★"]
+    for kigou in kigoulist:
+        df["ingredient"] = df["ingredient"].str.replace(kigou,"")
+    return df
+
+
+def sum_seasoning(df):
+    df["ingredient"] = df["ingredient"].replace("グラニュー糖","砂糖")
+    df["ingredient"] = df["ingredient"].replace("無塩バター","バター")
+    df["ingredient"] = df["ingredient"].replace("マーガリン","バター")
+    df["ingredient"] = df["ingredient"].replace("しょうゆ","醤油")
+    peppers = ["こしょう","胡椒","塩・胡椒","塩・コショウ","塩、こしょう","ブラックペッパー","塩コショウ","塩・塩こしょう","塩,塩こしょう","塩・こしょう","塩胡椒","コショウ"]
+    for pepper in peppers:
+        df["ingredient"] = df["ingredient"].replace(pepper,"塩こしょう")  
+    return df
+
+def mk_vector(df):
+    vec = pd.DataFrame(columns = ["recipeID","sugar","salt","butter","pepper","soysource"],index=[])
+    vec_dic = {"砂糖":"sugar","塩":"salt","バター":"butter","塩こしょう":"pepper","醤油":"soysource"}
+
+    vec["recipeID"] = df["recipeID"]
+
+    for row in df.itertuples():
+        vec.loc[vec["recipeID"]==row.recipeID,vec_dic[row.ingredient]] = row.size
+        
+    vec = vec.fillna(0)
+    return vec
+
+def sum_seasoning_otsumami(df):
+    df["ingredient"] = df["ingredient"].replace("料理酒","酒")
+    df["ingredient"] = df["ingredient"].replace("お酒","酒")
+    df["ingredient"] = df["ingredient"].replace("しょうゆ","醤油")
+    df["ingredient"] = df["ingredient"].replace("マヨ","マヨネーズ")
+    return df
+
+def mk_vector_otsumami(df):
+    vec = pd.DataFrame(columns = ["recipeID","salt","soysource","mayo","sesamioil","sake"],index=[])
+    vec_dic = {"塩":"salt","醤油":"soysource","マヨネーズ":"mayo","ごま油":"sesamioil","酒":"sake"}
+
+    vec["recipeID"] = df["recipeID"]
+
+    for row in df.itertuples():
+        vec.loc[vec["recipeID"]==row.recipeID,vec_dic[row.ingredient]] = row.size
+        
+    vec = vec.fillna(0)
+    return vec
+
+def extract_something(df,sth):
+    x=df[df["recipe_name"].str.contains(sth,na=False)]
+    y=df[df["details"].str.contains(sth,na=False)]
+    z=x.append(y)
+    a=set(z["recipeID"])
+    return df[df["recipeID"].isin(a)]
+    
+    
+＃データ設定
+dflist_ingredient = []
+dflist_recipe = []
+
+years = [1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014]
+
+for year in years:
+    df = read_ingredient(year)
+    dflist_ingredient.append(df)
+    df = read_recipe(year)
+    dflist_recipe.append(df)
+    
+    
+    
+df_ingredient = pd.concat(dflist_ingredient)
+df_recipe = pd.concat(dflist_recipe)
+
+otsumami = extract_something(df_recipe,"おつまみ") #おつまみを含むレシピ名を抽出
+otsumami_ingredient = df_ingredient[df_ingredient["recipeID"].isin(otsumami["recipeID"])] #材料か
+otsumami_ingredient_c = clean_ingredient(otsumami_ingredient)
+
+
+vec_list = ["塩","醤油","マヨネーズ","ごま油","酒"] #今回参考にする調味料
+df_ingredient_c_sum = sum_seasoning_otsumami(otsumami_ingredient_c) #調味料をまとめる
+df_ingredient_c_sum_cut = df_ingredient_c_sum[df_ingredient_c_sum["ingredient"].isin(vec_list)]
+
+vec = mk_vector_otsumami(df_ingredient_c_sum_cut)
+
+
+
+#酒と醤油の比率とって最頻値
+sake = vec[vec["sake"]>0.1 ]
+sake = sake[sake["sake"]<200]
+sakesoy = sake[sake["soysource"]>0.1]
+sakesoy = sakesoy[sakesoy["soysource"]<200]
+
+sakesoy_wariai = {}
+for row in sakesoy.itertuples():
+    p = str(row.sake/row.soysource)
+    if p not in sakesoy_wariai:
+        sakesoy_wariai[p] = 1
+    else:
+        sakesoy_wariai[p] += 1
+        
+sakesoy_wariai_sorted = sorted(sakesoy_wariai.items(), key=lambda x:x[1],reverse = True)
+
+
+
+#調味料の比をとって大きい順に(自動化失敗）
+for a in vec_list_e:
+ for b in vec_list_e:
+    vec1 = vec[vec["a"]>0.1]
+    vec1 = vec1[vec1["a"]<200]
+    vec2 = vec1[vec1["b"]>0.1]
+    vec2 = vec2[vec2["b"]<200]
+    
+    vec3_rate ={}
+    for row in vec2.itertuples():
+         p = str(row."a"/row."b")
+    if p not in vec3_rate:
+        vec3_rate[p] = 1
+    else:
+        vec3_rate[p] += 1
