@@ -184,18 +184,33 @@ sakesoy_wariai_sorted = sorted(sakesoy_wariai.items(), key=lambda x:x[1],reverse
 
 
 
-#調味料の比をとって大きい順に(自動化失敗）
+#調味料の比をとって大きい順に
+vec3_rate ={}
 for a in vec_list_e:
- for b in vec_list_e:
-    vec1 = vec[vec["a"]>0.1]
-    vec1 = vec1[vec1["a"]<200]
-    vec2 = vec1[vec1["b"]>0.1]
-    vec2 = vec2[vec2["b"]<200]
+    for b in vec_list_e:
+        vec1 = vec[vec[a]>0.1]
+        vec1 = vec1[vec1[a]<200]
+        vec2 = vec1[vec1[b]>0.1]
+        vec2 = vec2[vec2[b]<200]
+        
+        ans = vec2[a]/vec2[b]
+        ans.value_counts()
+        
+        vec3_rate [a+b] =ans.value_counts()
     
-    vec3_rate ={}
-    for row in vec2.itertuples():
-         p = str(row."a"/row."b")
-    if p not in vec3_rate:
-        vec3_rate[p] = 1
-    else:
-        vec3_rate[p] += 1
+
+#調味料の比をとって大きい順に(自動化失敗）
+#vec3_rate ={}
+#for a in vec_list_e:
+ #for b in vec_list_e:
+  #  vec1 = vec[vec[a]>0.1]
+   # vec1 = vec1[vec1[a]<200]
+    #vec2 = vec1[vec1[b]>0.1]
+    #vec2 = vec2[vec2[b]<200]
+    
+    #for row in vec2.itertuples():
+     #    p = str(row."a"/row."b")
+    #if p not in vec3_rate:
+     #   vec3_rate[p] = 1
+    #else:
+     #   vec3_rate[p] += 1
