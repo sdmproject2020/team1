@@ -57,7 +57,7 @@ def size2g(df): #小、大さじのところだけ変更する
     
 
 def g2float(df):
-    x = df[df['size'].str.match(r'^\d+\.*\**\d$')].copy()
+    x = df[df['size'].str.match(r'^\d+\.*\**\d*$')].copy()
     x['size'] = x['size'].apply(eval)
     return x
 
@@ -106,26 +106,6 @@ def mk_vector(df):
         
     vec = vec.fillna(0)
     return vec
-
-def sum_seasoning_otsumami(df):
-    df["ingredient"] = df["ingredient"].replace("料理酒","酒")
-    df["ingredient"] = df["ingredient"].replace("お酒","酒")
-    df["ingredient"] = df["ingredient"].replace("しょうゆ","醤油")
-    df["ingredient"] = df["ingredient"].replace("マヨ","マヨネーズ")
-    return df
-
-def mk_vector_otsumami(df):
-    vec = pd.DataFrame(columns = ["recipeID","salt","soysoure","mayo","sesamioil","sake"],index=[])
-    vec_dic = {"塩":"salt","砂糖":"sugar","マヨネーズ":"mayo","ごま油":"sesamioil","酒":"sake"}
-
-    vec["recipeID"] = df["recipeID"]
-
-    for row in df.itertuples():
-        vec.loc[vec["recipeID"]==row.recipeID,vec_dic[row.ingredient]] = row.size
-        
-    vec = vec.fillna(0)
-    return vec
-
 
 
 def extract_something(df,sth):
